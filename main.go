@@ -1,11 +1,15 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 
+	"github.com/logrusorgru/aurora/v3"
 	"github.com/urfave/cli/v2"
 )
+
+var errNoArgs = errors.New("no args provided")
 
 func main() {
 	app := &cli.App{
@@ -19,11 +23,28 @@ func main() {
 				UsageText: "send a request using GET method",
 				Action:    get,
 			},
+			{
+				Name:      "POST",
+				Aliases:   []string{"post"},
+				Usage:     "POST request",
+				UsageText: "send a request using POST method",
+				Action:    post,
+			},
 		},
-		Action: get,
+		Action: func(c *cli.Context) error {
+			switch c.Args().Len() {
+			case 0:
+				return errNoArgs
+			case 1:
+				return get(c)
+			default:
+				return post(c)
+			}
+		},
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(aurora.Red(err))
 	}
 }
