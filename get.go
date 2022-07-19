@@ -12,19 +12,22 @@ func get(c *cli.Context) error {
 		return errNoArgs
 	}
 
-	url := c.Args().First()
-	url = processUrl(url)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
+	urlStr := c.Args().First()
+	u, e := processUrl(urlStr)
+	if e != nil {
+		return e
 	}
 
-	err = printResp(resp, "html")
-	if err != nil {
-		return err
+	r, e := http.Get(u.String())
+	if e != nil {
+		return e
 	}
-	resp.Body.Close()
+
+	e = printResp(r, "html")
+	if e != nil {
+		return e
+	}
+	r.Body.Close()
 
 	return nil
 }

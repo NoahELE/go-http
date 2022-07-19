@@ -16,8 +16,11 @@ func post(c *cli.Context) error {
 		return errNoArgs
 	}
 
-	url := c.Args().First()
-	url = processUrl(url)
+	urlStr := c.Args().First()
+	u, e := processUrl(urlStr)
+	if e != nil {
+		return e
+	}
 
 	data := make(map[string]interface{})
 	for i := 1; i < c.Args().Len(); i++ {
@@ -30,8 +33,8 @@ func post(c *cli.Context) error {
 		} else if v == "false" {
 			data[k] = false
 		} else {
-			num, err := strconv.Atoi(v)
-			if err == nil {
+			num, e := strconv.Atoi(v)
+			if e == nil {
 				data[k] = num
 			} else {
 				data[k] = v
@@ -39,21 +42,21 @@ func post(c *cli.Context) error {
 		}
 	}
 
-	jsonStr, err := json.Marshal(data)
-	if err != nil {
-		return err
+	jsonStr, e := json.Marshal(data)
+	if e != nil {
+		return e
 	}
 
-	resp, err := http.Post(url, "application/json", bytes.NewReader(jsonStr))
-	if err != nil {
-		return err
+	r, e := http.Post(u.String(), "application/json", bytes.NewReader(jsonStr))
+	if e != nil {
+		return e
 	}
 
-	err = printResp(resp, "json")
-	if err != nil {
-		return err
+	e = printResp(r, "json")
+	if e != nil {
+		return e
 	}
-	resp.Body.Close()
+	r.Body.Close()
 
 	return nil
 }

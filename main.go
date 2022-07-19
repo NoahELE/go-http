@@ -42,8 +42,8 @@ func main() {
 		},
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
+	e := app.Run(os.Args)
+	if e != nil {
+		log.Fatal(e)
 	}
 }

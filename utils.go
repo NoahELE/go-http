@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/alecthomas/chroma/v2/formatters"
 	"github.com/alecthomas/chroma/v2/lexers"
@@ -12,12 +14,14 @@ import (
 	"github.com/logrusorgru/aurora/v3"
 )
 
-func processUrl(url string) string {
+func processUrl(urlStr string) (*url.URL, error) {
 	// adds 'https://' before url if no protocol is specified
-	if len(url) < 8 || url[:7] != "http://" || url[:8] != "https://" {
-		url = "https://" + url
+	b := strings.Builder{}
+	if len(urlStr) < 8 || urlStr[:7] != "http://" || urlStr[:8] != "https://" {
+		b.WriteString("https://")
 	}
-	return url
+	b.WriteString(urlStr)
+	return url.ParseRequestURI(b.String())
 }
 
 func printResp(resp *http.Response, bodySyntax string) error {
@@ -37,8 +41,8 @@ func printResp(resp *http.Response, bodySyntax string) error {
 			}
 		}
 	}
-
 	fmt.Println()
+
 	// print body
 	lexer := lexers.Get(bodySyntax)
 	style := styles.Get("monokai")
@@ -49,22 +53,22 @@ func printResp(resp *http.Response, bodySyntax string) error {
 	if formatter == nil {
 		formatter = formatters.Fallback
 	}
-	p := make([]byte, 1024)
+	b := make([]byte, 1024)
 	for {
-		n, err := resp.Body.Read(p)
+		n, e := resp.Body.Read(b)
 		if n != 0 {
-			iterator, err := lexer.Tokenise(nil, string(p[:n]))
-			if err != nil {
-				return err
+			iterator, e := lexer.Tokenise(nil, string(b[:n]))
+			if e != nil {
+				return e
 			}
-			err = formatter.Format(os.Stdout, style, iterator)
-			if err != nil {
-				return err
+			e = formatter.Format(os.Stdout, style, iterator)
+			if e != nil {
+				return e
 			}
-		} else if err == io.EOF {
+		} else if e == io.EOF {
 			break
 		} else {
-			return err
+			return e
 		}
 	}
 
