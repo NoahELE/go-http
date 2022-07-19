@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/logrusorgru/aurora/v3"
 	"github.com/urfave/cli/v2"
 )
 
@@ -45,6 +44,6 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(aurora.Red(err))
+		log.Fatal(err)
 	}
 }
