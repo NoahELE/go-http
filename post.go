@@ -13,11 +13,11 @@ import (
 func post(c *cli.Context) error {
 	// throw error if no args provided
 	if c.Args().Len() == 0 {
-		return errNoArgs
+		return ErrNoArg
 	}
 
 	urlStr := c.Args().First()
-	u, e := processUrl(urlStr)
+	u, e := parseUrl(urlStr)
 	if e != nil {
 		return e
 	}
@@ -51,12 +51,12 @@ func post(c *cli.Context) error {
 	if e != nil {
 		return e
 	}
+	defer r.Body.Close()
 
 	e = printResp(r, "json")
 	if e != nil {
 		return e
 	}
-	r.Body.Close()
 
 	return nil
 }

@@ -1,14 +1,11 @@
 package main
 
 import (
-	"errors"
 	"log"
 	"os"
 
 	"github.com/urfave/cli/v2"
 )
-
-var errNoArgs = errors.New("no args provided")
 
 func main() {
 	app := &cli.App{
@@ -33,7 +30,7 @@ func main() {
 		Action: func(c *cli.Context) error {
 			switch c.Args().Len() {
 			case 0:
-				return errNoArgs
+				return ErrNoArg
 			case 1:
 				return get(c)
 			default:

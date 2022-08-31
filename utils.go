@@ -14,7 +14,7 @@ import (
 	"github.com/logrusorgru/aurora/v3"
 )
 
-func processUrl(urlStr string) (*url.URL, error) {
+func parseUrl(urlStr string) (*url.URL, error) {
 	// adds 'https://' before url if no protocol is specified
 	b := strings.Builder{}
 	if len(urlStr) < 8 || urlStr[:7] != "http://" || urlStr[:8] != "https://" {
