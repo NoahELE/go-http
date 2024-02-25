@@ -10,7 +10,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}",
-      "args": ["httpbin.org/post", "a=2", "c=3"]
+      "args": ["post", "httpbin.org/post", "a=2", "c=3"]
     },
     {
       "name": "Test GET",
@@ -18,7 +18,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}",
-      "args": ["httpbin.org/get"]
+      "args": ["get", "httpbin.org/get"]
     }
   ]
 }

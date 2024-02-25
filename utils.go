@@ -11,14 +11,14 @@ import (
 	"github.com/alecthomas/chroma/v2/formatters"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
-	"github.com/logrusorgru/aurora/v3"
+	"github.com/logrusorgru/aurora/v4"
 )
 
 func parseUrl(urlStr string) (*url.URL, error) {
 	// adds 'https://' before url if no protocol is specified
 	b := strings.Builder{}
 	if len(urlStr) < 8 || urlStr[:7] != "http://" || urlStr[:8] != "https://" {
-		b.WriteString("https://")
+		b.WriteString("http://")
 	}
 	b.WriteString(urlStr)
 	return url.ParseRequestURI(b.String())

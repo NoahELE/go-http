@@ -2,29 +2,30 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
-func post(c *cli.Context) error {
+func postAction(ctx context.Context, cmd *cli.Command) error {
 	// throw error if no args provided
-	if c.Args().Len() == 0 {
+	if cmd.Args().Len() == 0 {
 		return ErrNoArg
 	}
 
-	urlStr := c.Args().First()
+	urlStr := cmd.Args().First()
 	u, e := parseUrl(urlStr)
 	if e != nil {
 		return e
 	}
 
 	data := make(map[string]interface{})
-	for i := 1; i < c.Args().Len(); i++ {
-		arg := c.Args().Get(i)
+	for i := 1; i < cmd.Args().Len(); i++ {
+		arg := cmd.Args().Get(i)
 		idx := strings.IndexRune(arg, '=')
 		k := arg[:idx]
 		v := arg[idx+1:]

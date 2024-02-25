@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
-	app := &cli.App{
+	cmd := &cli.Command{
 		Name:  "http",
 		Usage: "a http client implemented in go",
 		Commands: []*cli.Command{
@@ -17,30 +18,30 @@ func main() {
 				Aliases:   []string{"get"},
 				Usage:     "GET request",
 				UsageText: "send a request using GET method",
-				Action:    get,
+				Action:    getAction,
 			},
 			{
 				Name:      "POST",
 				Aliases:   []string{"post"},
 				Usage:     "POST request",
 				UsageText: "send a request using POST method",
-				Action:    post,
+				Action:    postAction,
 			},
 		},
-		Action: func(c *cli.Context) error {
-			switch c.Args().Len() {
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			switch cmd.Args().Len() {
 			case 0:
 				return ErrNoArg
 			case 1:
-				return get(c)
+				return getAction(ctx, cmd)
 			default:
-				return post(c)
+				return postAction(ctx, cmd)
 			}
 		},
 	}
 
-	e := app.Run(os.Args)
-	if e != nil {
-		log.Fatal(e)
+	err := cmd.Run(context.Background(), os.Args)
+	if err != nil {
+		log.Fatal(err)
 	}
 }

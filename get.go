@@ -1,33 +1,34 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
-func get(c *cli.Context) error {
+func getAction(ctx context.Context, cmd *cli.Command) error {
 	// throw error if no args provided
-	if c.Args().Len() == 0 {
+	if cmd.Args().Len() == 0 {
 		return ErrNoArg
 	}
 
 	// parse the arg as a url
-	urlStr := c.Args().First()
-	u, e := parseUrl(urlStr)
-	if e != nil {
-		return e
+	urlStr := cmd.Args().First()
+	url, err := parseUrl(urlStr)
+	if err != nil {
+		return err
 	}
 
-	r, e := http.Get(u.String())
-	if e != nil {
-		return e
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return err
 	}
-	defer r.Body.Close()
+	defer resp.Body.Close()
 
-	e = printResp(r, "html")
-	if e != nil {
-		return e
+	err = printResp(resp, "html")
+	if err != nil {
+		return err
 	}
 
 	return nil
