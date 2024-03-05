@@ -26,8 +26,10 @@ func parseUrl(urlStr string) (*url.URL, error) {
 
 func printResp(resp *http.Response, bodySyntax string) error {
 	// print http version and status code
-	fmt.Println(aurora.BgBlue(aurora.Black(resp.Proto)),
-		aurora.BgGreen(aurora.Black(resp.Status)))
+	fmt.Println(
+		aurora.BgBlue(aurora.Black(resp.Proto)),
+		aurora.BgGreen(aurora.Black(resp.Status)),
+	)
 
 	// print the headers
 	for k, v := range resp.Header {
@@ -55,20 +57,20 @@ func printResp(resp *http.Response, bodySyntax string) error {
 	}
 	b := make([]byte, 1024)
 	for {
-		n, e := resp.Body.Read(b)
+		n, err := resp.Body.Read(b)
 		if n != 0 {
-			iterator, e := lexer.Tokenise(nil, string(b[:n]))
-			if e != nil {
-				return e
+			iterator, err := lexer.Tokenise(nil, string(b[:n]))
+			if err != nil {
+				return err
 			}
-			e = formatter.Format(os.Stdout, style, iterator)
-			if e != nil {
-				return e
+			err = formatter.Format(os.Stdout, style, iterator)
+			if err != nil {
+				return err
 			}
-		} else if e == io.EOF {
+		} else if err == io.EOF {
 			break
 		} else {
-			return e
+			return err
 		}
 	}
 

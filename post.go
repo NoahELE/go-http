@@ -18,45 +18,53 @@ func postAction(ctx context.Context, cmd *cli.Command) error {
 	}
 
 	urlStr := cmd.Args().First()
-	u, e := parseUrl(urlStr)
-	if e != nil {
-		return e
+	url, err := parseUrl(urlStr)
+	if err != nil {
+		return err
 	}
 
 	data := make(map[string]interface{})
 	for i := 1; i < cmd.Args().Len(); i++ {
 		arg := cmd.Args().Get(i)
-		idx := strings.IndexRune(arg, '=')
-		k := arg[:idx]
-		v := arg[idx+1:]
-		if v == "true" {
-			data[k] = true
-		} else if v == "false" {
-			data[k] = false
-		} else {
-			num, e := strconv.Atoi(v)
-			if e == nil {
-				data[k] = num
+		if strings.Contains(arg, ":=") {
+			idx := strings.Index(arg, ":=")
+			k := arg[:idx]
+			v := arg[idx+2:]
+			if v == "true" {
+				data[k] = true
+			} else if v == "false" {
+				data[k] = false
 			} else {
-				data[k] = v
+				n, err := strconv.Atoi(v)
+				if err != nil {
+					data[k] = v
+				}
+				data[k] = n
 			}
+		} else if strings.Contains(arg, "=") {
+			idx := strings.Index(arg, "=")
+			k := arg[:idx]
+			v := arg[idx+1:]
+			data[k] = v
+		} else {
+			return ErrInvalidArg
 		}
 	}
 
-	jsonStr, e := json.Marshal(data)
-	if e != nil {
-		return e
+	jsonStr, err := json.Marshal(data)
+	if err != nil {
+		return err
 	}
 
-	r, e := http.Post(u.String(), "application/json", bytes.NewReader(jsonStr))
-	if e != nil {
-		return e
+	r, err := http.Post(url.String(), "application/json", bytes.NewReader(jsonStr))
+	if err != nil {
+		return err
 	}
 	defer r.Body.Close()
 
-	e = printResp(r, "json")
-	if e != nil {
-		return e
+	err = printResp(r, "json")
+	if err != nil {
+		return err
 	}
 
 	return nil
