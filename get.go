@@ -15,7 +15,7 @@ func getAction(ctx context.Context, cmd *cli.Command) error {
 
 	// parse the arg as a url
 	urlStr := cmd.Args().First()
-	url, err := parseUrl(urlStr)
+	url, err := parseURL(urlStr)
 	if err != nil {
 		return err
 	}
