@@ -2,4 +2,4 @@
 
 An golang implementation of httpie.
 
-Using [cli](github.com/urfave/cli), [aurora](github.com/logrusorgru/aurora) and [chroma](github.com/alecthomas/chroma/v2)
+Using [cobra](github.com/spf13/cobra), [aurora](github.com/logrusorgru/aurora) and [chroma](github.com/alecthomas/chroma/v2)
